@@ -1,0 +1,36 @@
+{
+  "name": "evtscan-sdk",
+  "version": "0.0.1",
+  "description": "The js(ts) SDK to help developer using evtscan api.",
+  "main": "dist/evtscan.js",
+  "scripts": {
+    "build": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NHibiki/evtscan-sdk.git"
+  },
+  "keywords": [
+    "evtscan",
+    "everitoken",
+    "evt"
+  ],
+  "author": "NHibiki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NHibiki/evtscan-sdk/issues"
+  },
+  "homepage": "https://github.com/NHibiki/evtscan-sdk#readme",
+  "devDependencies": {
+    "browserify": "^16.2.3",
+    "gulp": "^4.0.2",
+    "gulp-typescript": "^5.0.1",
+    "tsify": "^4.0.1",
+    "typescript": "^3.5.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.0"
+  }
+}
