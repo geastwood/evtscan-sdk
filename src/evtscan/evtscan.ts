@@ -1,23 +1,23 @@
 import ApiCaller from './apicaller';
 
 export interface EvtScanConfig {
-    entrypoint?: String;
-    timeout?: Number;
-    debug?: Boolean;
+    entrypoint?: string;
+    timeout?: number;
+    debug?: boolean;
 }
 
 export interface EvtScanParams {
-    since?: String;
-    from?: String;
-    page?: Number = 0;
-    size?: Number = 10;
+    since?: string;
+    from?: string;
+    page?: number;
+    size?: number;
 }
 
 export default class EvtScan {
 
-    private entrypoint: String = "https://evtscan.io";
-    private timeout: Number = 3000;
-    private debug: Boolean = false;
+    private entrypoint: string = "https://evtscan.io/api";
+    private timeout: number = 3000;
+    private debug: boolean = false;
     private apiCaller: ApiCaller;
     
     private defaultParams: EvtScanParams;
@@ -25,6 +25,7 @@ export default class EvtScan {
     public static R = {
         General: {
             System: '/',
+            SysInfo: '/info',
             ChainInfo: '/chaininfo',
             Address: '/searchAddress'
         },
@@ -61,6 +62,14 @@ export default class EvtScan {
 
         this.apiCaller = new ApiCaller(this.entrypoint, this.timeout);
 
+    }
+
+    async request(uri: string, params?: EvtScanParams) {
+        const res = await this.apiCaller.get(uri, params);
+        if (res.data && res.status) {
+            return res.data;
+        }
+        return res;
     }
 
 }
