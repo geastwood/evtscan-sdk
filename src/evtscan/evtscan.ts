@@ -1,4 +1,6 @@
-import ApiCaller from './apicaller';
+import ApiCaller from './instance/apicaller';
+import Pager, { PagerConfig } from './instance/pager';
+import * as Types from './instance/types';
 
 export interface EvtScanConfig {
     entrypoint?: string;
@@ -6,12 +8,7 @@ export interface EvtScanConfig {
     debug?: boolean;
 }
 
-export interface EvtScanParams {
-    since?: string;
-    from?: string;
-    page?: number;
-    size?: number;
-}
+export type EvtScanParams = PagerConfig;
 
 export default class EvtScan {
 
@@ -32,8 +29,8 @@ export default class EvtScan {
         Recent: {
             Block: '/block',
             Transaction: '/transaction',
-            Everipay: ['/trxByName', {trx_name: 'everipay'}],
-            Everipass: ['/trxByName', {trx_name: 'everipass'}],
+            Everipay: '/everipay',
+            Everipass: '/everipass',
             Action: '/action',
             Fungible: '/fungible',
             Domain: '/domain',
@@ -64,12 +61,41 @@ export default class EvtScan {
 
     }
 
-    async request(uri: string, params?: EvtScanParams) {
-        const res = await this.apiCaller.get(uri, params);
-        if (res.data && res.status) {
-            return res.data;
+    get request () {
+        return this.apiCaller ? this.apiCaller.request : undefined;
+    }
+
+    // Build recent request session
+    block = this.buildRequest.bind(this,'Block');
+    transaction = this.buildRequest.bind(this, 'Transaction');
+    fungible = this.buildRequest.bind(this, 'Fungible');
+    group = this.buildRequest.bind(this, 'Group');
+    domain = this.buildRequest.bind(this, 'Domain');
+    nonfungible = this.buildRequest.bind(this, 'Nonfungible');
+    buildRequest(type: string, config: any) {
+        const recent = EvtScan.R.Recent as any;
+        const detail = EvtScan.R.Detail as any;
+        const uri: string = recent[type];
+        if (uri) {
+            if (!config || typeof config === 'object') {
+                return new Pager(uri, config);
+            } else {
+                // get Detail
+            }
+            
+        } else {
+            throw Error('The API Entrypoint is not recognized.');
         }
-        return res;
+    }
+
+    /**
+     * Get/Search evtAddress
+     */
+    searchAddress(addr: string) {
+
+    }
+    address(addr: Types.EvtAddress) {
+
     }
 
 }

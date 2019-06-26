@@ -1,5 +1,5 @@
 import EvtScan, { EvtScanConfig } from './evtscan/evtscan';
-import ApiCaller from './evtscan/apicaller';
+import ApiCaller from './evtscan/instance/apicaller';
 
 export default {
     
