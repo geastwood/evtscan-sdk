@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -38,14 +51,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var shared_1 = require("../shared");
 var evtscan_1 = require("../evtscan");
 var pager_1 = require("./pager");
-var EvtAddress = /** @class */ (function () {
-    function EvtAddress(addr, apiCaller) {
-        this.stats = {};
-        this.assets = [];
-        this.history = null;
-        this.address = addr.address;
+var Base = /** @class */ (function () {
+    function Base(data, apiCaller) {
+        this._raw = data;
         this.apiCaller = apiCaller || shared_1.default.apiCaller;
+        this.init();
     }
+    Base.prototype.init = function () { };
+    Base.prototype.update = function () {
+        return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
+            return [2 /*return*/];
+        }); });
+    };
+    return Base;
+}());
+var EvtAddress = /** @class */ (function (_super) {
+    __extends(EvtAddress, _super);
+    function EvtAddress() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.stats = {};
+        _this.assets = [];
+        _this.history = null;
+        return _this;
+    }
+    EvtAddress.prototype.init = function () {
+        this.address = this._raw.address;
+    };
     EvtAddress.prototype.update = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b;
@@ -67,5 +98,38 @@ var EvtAddress = /** @class */ (function () {
         });
     };
     return EvtAddress;
-}());
+}(Base));
 exports.EvtAddress = EvtAddress;
+var Block = /** @class */ (function (_super) {
+    __extends(Block, _super);
+    function Block() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Block.prototype.init = function () {
+        this.id = this._raw.block_id;
+        this.num = this._raw.block_num;
+        this.root = this._raw.trx_merkle_root;
+        this.trxCount = this._raw.trx_count;
+        this.producer = this._raw.producer;
+        this.pending = this._raw.pending;
+        this.timestamp = new Date(this._raw.timestamp);
+        this.created = new Date(this._raw.created_at);
+        this.prevId = this._raw.prev_block_id;
+    };
+    Block.prototype.prev = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _a = this;
+                        _b = Block.bind;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Block, null, this.prevId)];
+                    case 1: return [2 /*return*/, _a._prev = new (_b.apply(Block, [void 0, _c.sent()]))()];
+                }
+            });
+        });
+    };
+    return Block;
+}(Base));
+exports.Block = Block;

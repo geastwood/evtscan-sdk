@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var apicaller_1 = require("./instance/apicaller");
 var pager_1 = require("./instance/pager");
@@ -41,7 +52,15 @@ var EvtScan = /** @class */ (function () {
         var uri = recent[type];
         if (uri) {
             if (!config || typeof config === 'object') {
-                return new pager_1.default(uri, config, null, this.apiCaller);
+                return new pager_1.default(uri, __assign({}, config, { formatter: function (_, data) {
+                        var c = Classes[type];
+                        if (c) {
+                            return new c(data, _.apiCaller);
+                        }
+                        else {
+                            return data;
+                        }
+                    } }), null, this.apiCaller);
             }
             else {
                 // get Detail

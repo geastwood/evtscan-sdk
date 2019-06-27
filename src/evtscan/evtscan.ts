@@ -88,7 +88,17 @@ export default class EvtScan {
         const uri: string = recent[type];
         if (uri) {
             if (!config || typeof config === 'object') {
-                return new Pager(uri, config, null, this.apiCaller);
+                return new Pager(uri, {
+                    ...config,
+                    formatter: (_: Pager, data: any) => {
+                        const c = (Classes as any)[type];
+                        if (c) {
+                            return new c(data, _.apiCaller);
+                        } else {
+                            return data;
+                        }
+                    }
+                }, null, this.apiCaller);
             } else {
                 // get Detail
             }
