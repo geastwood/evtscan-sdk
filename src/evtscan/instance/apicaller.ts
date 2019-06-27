@@ -4,7 +4,7 @@ export default class ApiCaller {
     private timeout: number = 3000;
 
     static Config = {
-        fetch: (typeof window === 'undefined' ? null : window.fetch || null) as any
+        fetch: null as any
     };
 
     constructor(entrypoint?: string, timeout?: number) {
@@ -24,10 +24,11 @@ export default class ApiCaller {
     }
     
     public async get(uri: string, params={}, headers={}) {
-        if (!ApiCaller.Config.fetch) {
+        const fetch = ApiCaller.Config.fetch || (typeof window !== 'undefined' && window.fetch);
+        if (!fetch) {
             throw Error('Your device does not support fetch function.');
         }
-        const req = await ApiCaller.Config.fetch(this.entrypoint +
+        const req = await fetch(this.entrypoint +
             uri +
             this.queryParams(params), {
                 method: 'GET',

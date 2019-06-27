@@ -69,14 +69,15 @@ var ApiCaller = /** @class */ (function () {
         if (params === void 0) { params = {}; }
         if (headers === void 0) { headers = {}; }
         return __awaiter(this, void 0, void 0, function () {
-            var req;
+            var fetch, req;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!ApiCaller.Config.fetch) {
+                        fetch = ApiCaller.Config.fetch || (typeof window !== 'undefined' && window.fetch);
+                        if (!fetch) {
                             throw Error('Your device does not support fetch function.');
                         }
-                        return [4 /*yield*/, ApiCaller.Config.fetch(this.entrypoint +
+                        return [4 /*yield*/, fetch(this.entrypoint +
                                 uri +
                                 this.queryParams(params), {
                                 method: 'GET',
@@ -117,7 +118,7 @@ var ApiCaller = /** @class */ (function () {
         });
     };
     ApiCaller.Config = {
-        fetch: (typeof window === 'undefined' ? null : window.fetch || null)
+        fetch: null
     };
     return ApiCaller;
 }());
