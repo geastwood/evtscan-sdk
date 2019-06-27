@@ -1,9 +1,11 @@
-import Axios from 'axios';
-
 export default class ApiCaller {
 
     private entrypoint: string = "https://evtscan.io/api";
     private timeout: number = 3000;
+
+    static Config = {
+        fetch: (typeof window === 'undefined' ? null : window.fetch || null) as any
+    };
 
     constructor(entrypoint?: string, timeout?: number) {
 
@@ -11,19 +13,37 @@ export default class ApiCaller {
         if (timeout) this.timeout = timeout;
 
     }
+
+    public queryParams(params: any): string {
+        if (!params) return '';
+        const res = Object.keys(params)
+            .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+            .join('&');
+        if (!res) return '';
+        return `?${res}`;
+    }
     
-    async get(uri: string, params={}, headers={}) {
-        return (await Axios.get(this.entrypoint + uri, {
-            params,
-            headers: {
-                'User-Agent': 'EvtScanSDK v1.0',
-                ...headers
-            },
-            timeout: this.timeout
-        })).data;
+    public async get(uri: string, params={}, headers={}) {
+        if (!ApiCaller.Config.fetch) {
+            throw Error('Your device does not support fetch function.');
+        }
+        const req = await ApiCaller.Config.fetch(this.entrypoint +
+            uri +
+            this.queryParams(params), {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: {
+                    'User-Agent': 'EvtScanSDK v1.0',
+                    ...headers
+                },
+                redirect: 'follow',
+                referrer: 'no-referrer',
+            });
+        return await req.json();
     }
 
-    async request(uri: string, params: any = {}, key: string = "") {
+    public async request(uri: string, params: any = {}, key: string = "") {
         if (uri.indexOf('%%') !== -1 && key) {
             uri = uri.replace('%%', key);
         }

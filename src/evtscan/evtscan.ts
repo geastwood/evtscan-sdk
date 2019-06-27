@@ -72,6 +72,8 @@ export default class EvtScan {
     group = this.buildRequest.bind(this, 'Group');
     domain = this.buildRequest.bind(this, 'Domain');
     nonfungible = this.buildRequest.bind(this, 'Nonfungible');
+    everipay = this.buildRequest.bind(this, 'Everipay');
+    everipass = this.buildRequest.bind(this, 'Everipass');
     buildRequest(type: string, config: any) {
         const recent = EvtScan.R.Recent as any;
         const detail = EvtScan.R.Detail as any;
@@ -92,7 +94,9 @@ export default class EvtScan {
      * Get/Search evtAddress
      */
     searchAddress(addr: string) {
-
+        return new Pager(EvtScan.R.General.Address, {
+            keyword: addr
+        });
     }
     address(addr: Types.EvtAddress) {
 

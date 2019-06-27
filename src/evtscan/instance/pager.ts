@@ -5,18 +5,20 @@ export interface PagerConfig {
     from?: string;
     page?: number;
     size?: number;
+    keyword?: string; // for address only
 }
 
 export default class Pager {
 
     public pageSize: number = 20;
     public pageOffset: number = -1;
-    public pageData: any = [];
     public data: any;
 
     public readonly uri: string;
     public readonly key: string;
 
+    private pageData: any = [];
+    private config: PagerConfig;
     private apiCaller: ApiCaller;
     
     public constructor(uri:string, config?: PagerConfig, key?: string, apiCaller?: ApiCaller) {
@@ -30,6 +32,7 @@ export default class Pager {
         if (!config) return;
         if (config.page) this.pageOffset = config.page - 1;
         if (config.size) this.pageSize = config.size;
+        this.config = config;
     }
 
     private async getPageData() {
@@ -37,7 +40,9 @@ export default class Pager {
             return this.pageData[this.pageOffset];
         }
         this.pageData[this.pageOffset]
+            = this.data
             = await this.apiCaller.request(this.uri, {
+                ...this.config,
                 page: this.pageOffset,
                 size: this.pageSize
             }, this.key || '');
@@ -57,7 +62,7 @@ export default class Pager {
             p = this.pageOffset;
         }
         this.pageOffset = p;
-        return this.data = (await this.getPageData());
+        return await this.getPageData();
     }
 
 }
