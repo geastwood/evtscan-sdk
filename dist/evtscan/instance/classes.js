@@ -133,3 +133,138 @@ var Block = /** @class */ (function (_super) {
     return Block;
 }(Base));
 exports.Block = Block;
+var Transaction = /** @class */ (function (_super) {
+    __extends(Transaction, _super);
+    function Transaction() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Transaction.prototype.init = function () {
+        this.id = this._raw.trx_id;
+        this.sequenceNum = this._raw.seq_num;
+        this.blockNum = this._raw.block_num;
+        this.actionCount = this._raw.action_count;
+        this.maxCharge = this._raw.max_charge;
+        this.pending = this._raw.pending;
+        this.type = this._raw.type;
+        this.status = this._raw.status;
+        this.signatures = this._raw.signatures || [];
+        this.keys = this._raw.keys.map(function (address) { return ({
+            address: address
+        }); });
+        this.elapsed = this._raw.elapsed;
+        this.charge = this._raw.charge;
+        this.suspend = this._raw.suspend_name;
+        this.timestamp = new Date(this._raw.timestamp);
+        this.created = new Date(this._raw.created_at);
+        this.expiration = new Date(this._raw.expiration);
+        this.blockId = this._raw.block_id;
+        this.payer = {
+            address: this._raw.pager
+        };
+    };
+    Transaction.prototype.getPayer = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        this._payer = new EvtAddress(this.payer, this.apiCaller);
+                        return [4 /*yield*/, this._payer.update()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, this._payer];
+                }
+            });
+        });
+    };
+    Transaction.prototype.getBlock = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _a = this;
+                        _b = Block.bind;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Block, null, this.blockId)];
+                    case 1: return [2 /*return*/, _a._block = new (_b.apply(Block, [void 0, _c.sent()]))()];
+                }
+            });
+        });
+    };
+    return Transaction;
+}(Base));
+exports.Transaction = Transaction;
+var Everipay = /** @class */ (function (_super) {
+    __extends(Everipay, _super);
+    function Everipay() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return Everipay;
+}(Transaction));
+exports.Everipay = Everipay;
+var Everipass = /** @class */ (function (_super) {
+    __extends(Everipass, _super);
+    function Everipass() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return Everipass;
+}(Transaction));
+exports.Everipass = Everipass;
+var Fungible = /** @class */ (function (_super) {
+    __extends(Fungible, _super);
+    function Fungible() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Fungible.prototype.init = function () {
+        this.name = this._raw.name;
+        this.symName = this._raw.sym_name;
+        this.symId = this._raw.sym_id;
+        this.precision = parseInt(this._raw.sym.split(",")[0], 10) || 5;
+        this.total = this._raw.total_supply;
+        this.current = typeof this._raw.current_supply === 'undefined' ? -1 : this._raw.current_supply;
+        this.metas = this._raw.metas;
+        this.issue = this._raw.issue;
+        this.transfer = this._raw.transfer;
+        this.manage = this._raw.manage;
+        this.timestamp = new Date(this._raw.timestamp);
+        this.created = new Date(this._raw.created_at);
+        this.creator = {
+            address: this._raw.pager
+        };
+        this.trxId = this._raw.trx_id;
+    };
+    Object.defineProperty(Fungible.prototype, "sym", {
+        get: function () { return this.precision + ",S#" + this.symId; },
+        enumerable: true,
+        configurable: true
+    });
+    Fungible.prototype.getTransaction = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _a = this;
+                        _b = Transaction.bind;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Block, null, this.trxId)];
+                    case 1: return [2 /*return*/, _a._trx = new (_b.apply(Transaction, [void 0, _c.sent()]))()];
+                }
+            });
+        });
+    };
+    Fungible.prototype.getCreator = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        this._creator = new EvtAddress(this.creator, this.apiCaller);
+                        return [4 /*yield*/, this._creator.update()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, this._creator];
+                }
+            });
+        });
+    };
+    return Fungible;
+}(Base));
+exports.Fungible = Fungible;
