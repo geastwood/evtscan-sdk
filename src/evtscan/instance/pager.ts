@@ -6,6 +6,7 @@ export interface PagerConfig {
     page?: number;
     size?: number;
     keyword?: string; // for address only
+    formatter?: (pager: Pager, data: any) => any; // do data format
 }
 
 export default class Pager {
@@ -13,15 +14,16 @@ export default class Pager {
     public pageSize: number = 20;
     public pageOffset: number = -1;
     public data: any;
+    public apiCaller: ApiCaller;
 
     public readonly uri: string;
     public readonly key: string;
 
     private pageData: any = [];
     private config: PagerConfig;
-    private apiCaller: ApiCaller;
+    private formatter: (pager: Pager, data: any) => any;
     
-    public constructor(uri:string, config?: PagerConfig, key?: string, apiCaller?: ApiCaller) {
+    public constructor(uri:string, config?: PagerConfig, key?: string | null, apiCaller?: ApiCaller) {
         this.uri = uri;
         if (key) this.key = key;
         if (apiCaller) {
@@ -32,6 +34,7 @@ export default class Pager {
         if (!config) return;
         if (config.page) this.pageOffset = config.page - 1;
         if (config.size) this.pageSize = config.size;
+        if (config.formatter) this.formatter = config.formatter;
         this.config = config;
     }
 
@@ -46,6 +49,19 @@ export default class Pager {
                 page: this.pageOffset,
                 size: this.pageSize
             }, this.key || '');
+        
+        if (this.formatter) {
+            if (this.data.length && this.data.forEach) {
+                this.data.forEach((v: any, i: number) => {
+                    this.data[i] = this.formatter(this, v);
+                });
+            } else {
+                this.pageData[this.pageOffset]
+                    = this.data
+                    = this.formatter(this, this.data);
+            }
+        }
+
         return this.data;
     }
 

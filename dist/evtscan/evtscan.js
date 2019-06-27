@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var apicaller_1 = require("./instance/apicaller");
 var pager_1 = require("./instance/pager");
+var Classes = require("./instance/classes");
+var shared_1 = require("./shared");
 var EvtScan = /** @class */ (function () {
     function EvtScan(config, defaultParams) {
         this.entrypoint = "https://evtscan.io/api";
@@ -24,7 +26,7 @@ var EvtScan = /** @class */ (function () {
             this.debug = config.debug;
         if (defaultParams)
             this.defaultParams = defaultParams;
-        this.apiCaller = new apicaller_1.default(this.entrypoint, this.timeout);
+        this.apiCaller = shared_1.default.apiCaller = new apicaller_1.default(this.entrypoint, this.timeout);
     }
     Object.defineProperty(EvtScan.prototype, "request", {
         get: function () {
@@ -39,7 +41,7 @@ var EvtScan = /** @class */ (function () {
         var uri = recent[type];
         if (uri) {
             if (!config || typeof config === 'object') {
-                return new pager_1.default(uri, config);
+                return new pager_1.default(uri, config, null, this.apiCaller);
             }
             else {
                 // get Detail
@@ -53,11 +55,18 @@ var EvtScan = /** @class */ (function () {
      * Get/Search evtAddress
      */
     EvtScan.prototype.searchAddress = function (addr) {
+        var _this = this;
         return new pager_1.default(EvtScan.R.General.Address, {
-            keyword: addr
-        });
+            keyword: addr,
+            formatter: function (_, data) {
+                return _this.address({
+                    address: data
+                });
+            }
+        }, null, this.apiCaller);
     };
     EvtScan.prototype.address = function (addr) {
+        return new Classes.EvtAddress(addr, this.apiCaller);
     };
     EvtScan.R = {
         General: {

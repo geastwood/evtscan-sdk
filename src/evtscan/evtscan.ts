@@ -1,6 +1,9 @@
 import ApiCaller from './instance/apicaller';
-import Pager, { PagerConfig } from './instance/pager';
+import Pager from './instance/pager';
 import * as Types from './instance/types';
+import * as Classes from './instance/classes';
+
+import Shared from './shared';
 
 export interface EvtScanConfig {
     entrypoint?: string;
@@ -8,7 +11,12 @@ export interface EvtScanConfig {
     debug?: boolean;
 }
 
-export type EvtScanParams = PagerConfig;
+export interface EvtScanParams {
+    since?: string;
+    from?: string;
+    page?: number;
+    size?: number;
+}
 
 export default class EvtScan {
 
@@ -57,7 +65,7 @@ export default class EvtScan {
         if (config.debug) this.debug = config.debug;
         if (defaultParams) this.defaultParams = defaultParams;
 
-        this.apiCaller = new ApiCaller(this.entrypoint, this.timeout);
+        this.apiCaller = Shared.apiCaller = new ApiCaller(this.entrypoint, this.timeout);
 
     }
 
@@ -80,7 +88,7 @@ export default class EvtScan {
         const uri: string = recent[type];
         if (uri) {
             if (!config || typeof config === 'object') {
-                return new Pager(uri, config);
+                return new Pager(uri, config, null, this.apiCaller);
             } else {
                 // get Detail
             }
@@ -95,11 +103,16 @@ export default class EvtScan {
      */
     searchAddress(addr: string) {
         return new Pager(EvtScan.R.General.Address, {
-            keyword: addr
-        });
+            keyword: addr,
+            formatter: (_: Pager, data: string) => {
+                return this.address({
+                    address: data
+                } as Types.EvtAddress);
+            }
+        }, null, this.apiCaller);
     }
     address(addr: Types.EvtAddress) {
-
+        return new Classes.EvtAddress(addr, this.apiCaller);
     }
 
 }

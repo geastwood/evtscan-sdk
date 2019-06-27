@@ -67,11 +67,14 @@ var Pager = /** @class */ (function () {
             this.pageOffset = config.page - 1;
         if (config.size)
             this.pageSize = config.size;
+        if (config.formatter)
+            this.formatter = config.formatter;
         this.config = config;
     }
     Pager.prototype.getPageData = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b, _c;
+            var _this = this;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -86,6 +89,18 @@ var Pager = /** @class */ (function () {
                         _a[_b]
                             = _c.data
                                 = _d.sent();
+                        if (this.formatter) {
+                            if (this.data.length && this.data.forEach) {
+                                this.data.forEach(function (v, i) {
+                                    _this.data[i] = _this.formatter(_this, v);
+                                });
+                            }
+                            else {
+                                this.pageData[this.pageOffset]
+                                    = this.data
+                                        = this.formatter(this, this.data);
+                            }
+                        }
                         return [2 /*return*/, this.data];
                 }
             });
