@@ -53,9 +53,10 @@ var evtscan_1 = require("../evtscan");
 var pager_1 = require("./pager");
 var Base = /** @class */ (function () {
     function Base(data, apiCaller) {
-        this._raw = data;
+        this._raw = data || null;
         this.apiCaller = apiCaller || shared_1.default.apiCaller;
-        this.init();
+        if (this._raw)
+            this.init();
     }
     Base.prototype.init = function () { };
     Base.prototype.update = function (params) {

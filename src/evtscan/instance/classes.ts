@@ -10,9 +10,9 @@ class Base<T=any> {
     protected apiCaller: ApiCaller;
 
     constructor(data: any, apiCaller?: ApiCaller) {
-        this._raw = data;
+        this._raw = data || null;
         this.apiCaller = apiCaller || Shared.apiCaller;
-        this.init();
+        if (this._raw) this.init();
     }
 
     protected init() {}

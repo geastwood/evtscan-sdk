@@ -17,6 +17,7 @@ export default class ApiCaller {
     public queryParams(params: any): string {
         if (!params) return '';
         const res = Object.keys(params)
+            .filter(k => k !== 'formatter')
             .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
             .join('&');
         if (!res) return '';

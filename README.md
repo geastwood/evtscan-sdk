@@ -1,6 +1,6 @@
 # evtscan-sdk
 
-[![NHibiki](https://img.shields.io/badge/Download-Stable-39c000.svg?style=flat-square)](https://cdn.jsdelivr.net/npm/evtscan@1.0.4/dist/evtscan.js)
+[![NHibiki](https://img.shields.io/badge/Download-Stable-39c000.svg?style=flat-square)](https://cdn.jsdelivr.net/npm/evtscan@1.0.5/dist/evtscan.js)
 [![NHibiki](https://img.shields.io/badge/Download-Lately-edb900.svg?style=flat-square)](https://cdn.jsdelivr.net/npm/evtscan/dist/evtscan.js)
 [![Docs](https://img.shields.io/badge/Read-Docs-4da1ff.svg?style=flat-square)](#)
 [![NHibiki](https://img.shields.io/badge/Made%20With-%3C3-ff3000.svg?style=flat-square)](#)
@@ -28,7 +28,7 @@
     // Or [with homemade apiCaller]
     // const evtScan = new EvtScan({ endpoint: 'https://some-evtscans.io/api/' });
 
-    const blocks = e.block();
+    const blocks = evtScan.block();
 
     console.log(await blocks.next()); // it will print the first 10 blocks
     console.log(await blocks.next()); // then next 10-19[included] blocks

@@ -59,6 +59,7 @@ var ApiCaller = /** @class */ (function () {
         if (!params)
             return '';
         var res = Object.keys(params)
+            .filter(function (k) { return k !== 'formatter'; })
             .map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); })
             .join('&');
         if (!res)
