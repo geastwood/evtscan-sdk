@@ -6,7 +6,7 @@ import Pager from './pager';
 
 class Base<T=any> {
 
-    protected readonly _raw: T | any;
+    protected _raw: T | any;
     protected apiCaller: ApiCaller;
 
     constructor(data: any, apiCaller?: ApiCaller) {
@@ -16,7 +16,7 @@ class Base<T=any> {
     }
 
     protected init() {}
-    async update() {}
+    async update(params?: any): Promise<T | void> {}
 
 }
 
@@ -31,10 +31,15 @@ export class EvtAddress extends Base<Types.EvtAddress> {
         this.address = this._raw.address;
     }
 
-    async update() {
+    async update(address?: string) {
+        if (address) {
+            this.address = address;
+            this._raw = { address } as Types.EvtAddress;
+        }
         this.stats = await this.apiCaller.request(EvtScan.R.Detail.Address, null, this.address);
         this.assets = await this.apiCaller.request(EvtScan.R.Detail.AddressAssets, null, this.address);
         this.history = new Pager(EvtScan.R.Detail.AddressHistory, {}, this.address, this.apiCaller);
+        return this;
     }
 
 }
@@ -64,6 +69,14 @@ export class Block extends Base<any> {
         this.timestamp = new Date(this._raw.timestamp);
         this.created = new Date(this._raw.created_at);
         this.prevId = this._raw.prev_block_id;
+    }
+
+    async update(id?: string) {
+        if (id) {
+            this._raw = await this.apiCaller.request(EvtScan.R.Detail.Block, null, id);
+            this.init();
+        }
+        return this;
     }
 
     async prev() {
@@ -123,6 +136,14 @@ export class Transaction extends Base<any> {
         } as Types.EvtAddress;
     }
 
+    async update(id?: string) {
+        if (id) {
+            this._raw = await this.apiCaller.request(EvtScan.R.Detail.Transaction, null, id);
+            this.init();
+        }
+        return this;
+    }
+
     public async getPayer() {
         this._payer = new EvtAddress(this.payer, this.apiCaller);
         await this._payer.update();
@@ -180,6 +201,14 @@ export class Fungible extends Base<any> {
             address: this._raw.pager
         } as Types.EvtAddress;
         this.trxId = this._raw.trx_id;
+    }
+
+    async update(id?: string) {
+        if (id) {
+            this._raw = await this.apiCaller.request(EvtScan.R.Detail.Fungible, null, id);
+            this.init();
+        }
+        return this;
     }
 
     public get sym() { return `${this.precision},S#${this.symId}`; }

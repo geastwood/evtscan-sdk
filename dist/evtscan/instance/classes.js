@@ -58,7 +58,7 @@ var Base = /** @class */ (function () {
         this.init();
     }
     Base.prototype.init = function () { };
-    Base.prototype.update = function () {
+    Base.prototype.update = function (params) {
         return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
             return [2 /*return*/];
         }); });
@@ -77,12 +77,16 @@ var EvtAddress = /** @class */ (function (_super) {
     EvtAddress.prototype.init = function () {
         this.address = this._raw.address;
     };
-    EvtAddress.prototype.update = function () {
+    EvtAddress.prototype.update = function (address) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        if (address) {
+                            this.address = address;
+                            this._raw = { address: address };
+                        }
                         _a = this;
                         return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Address, null, this.address)];
                     case 1:
@@ -92,7 +96,7 @@ var EvtAddress = /** @class */ (function (_super) {
                     case 2:
                         _b.assets = _c.sent();
                         this.history = new pager_1.default(evtscan_1.default.R.Detail.AddressHistory, {}, this.address, this.apiCaller);
-                        return [2 /*return*/];
+                        return [2 /*return*/, this];
                 }
             });
         });
@@ -115,6 +119,24 @@ var Block = /** @class */ (function (_super) {
         this.timestamp = new Date(this._raw.timestamp);
         this.created = new Date(this._raw.created_at);
         this.prevId = this._raw.prev_block_id;
+    };
+    Block.prototype.update = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!id) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Block, null, id)];
+                    case 1:
+                        _a._raw = _b.sent();
+                        this.init();
+                        _b.label = 2;
+                    case 2: return [2 /*return*/, this];
+                }
+            });
+        });
     };
     Block.prototype.prev = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -161,6 +183,24 @@ var Transaction = /** @class */ (function (_super) {
         this.payer = {
             address: this._raw.pager
         };
+    };
+    Transaction.prototype.update = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!id) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Transaction, null, id)];
+                    case 1:
+                        _a._raw = _b.sent();
+                        this.init();
+                        _b.label = 2;
+                    case 2: return [2 /*return*/, this];
+                }
+            });
+        });
     };
     Transaction.prototype.getPayer = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -231,6 +271,24 @@ var Fungible = /** @class */ (function (_super) {
             address: this._raw.pager
         };
         this.trxId = this._raw.trx_id;
+    };
+    Fungible.prototype.update = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!id) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Fungible, null, id)];
+                    case 1:
+                        _a._raw = _b.sent();
+                        this.init();
+                        _b.label = 2;
+                    case 2: return [2 /*return*/, this];
+                }
+            });
+        });
     };
     Object.defineProperty(Fungible.prototype, "sym", {
         get: function () { return this.precision + ",S#" + this.symId; },

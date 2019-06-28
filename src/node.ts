@@ -1,6 +1,6 @@
-import EvtScan from './main';
+import { ApiCaller } from './main';
 import Fetch from 'node-fetch';
 
-EvtScan.ApiCaller.Config.fetch = Fetch;
+ApiCaller.Config.fetch = Fetch;
 
-export default EvtScan;
+export * from './main';

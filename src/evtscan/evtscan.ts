@@ -6,8 +6,8 @@ import * as Classes from './instance/classes';
 import Shared from './shared';
 
 export interface EvtScanConfig {
-    entrypoint?: string;
-    timeout?: number;
+    apiCaller?: ApiCaller;
+    endpoint?: string;
     debug?: boolean;
 }
 
@@ -20,11 +20,8 @@ export interface EvtScanParams {
 
 export default class EvtScan {
 
-    private entrypoint: string = "https://evtscan.io/api";
-    private timeout: number = 3000;
-    private debug: boolean = false;
     private apiCaller: ApiCaller;
-    
+    private debug: boolean = false;
     private defaultParams: EvtScanParams;
     
     public static R = {
@@ -58,14 +55,16 @@ export default class EvtScan {
         }
     };
 
-    constructor(config: EvtScanConfig, defaultParams?: EvtScanParams) {
+    public static new = (config?: EvtScanConfig) => new EvtScan(config || {});
+    constructor(config: EvtScanConfig = {}, defaultParams?: EvtScanParams) {
 
-        if (config.entrypoint) this.entrypoint = config.entrypoint;
-        if (config.timeout) this.timeout = config.timeout;
+        if (config.apiCaller && config.apiCaller instanceof ApiCaller) {
+            this.apiCaller = Shared.apiCaller = config.apiCaller;
+        } else {
+            this.apiCaller = Shared.apiCaller = new ApiCaller(config.endpoint || null);
+        }
         if (config.debug) this.debug = config.debug;
         if (defaultParams) this.defaultParams = defaultParams;
-
-        this.apiCaller = Shared.apiCaller = new ApiCaller(this.entrypoint, this.timeout);
 
     }
 

@@ -1,6 +1,6 @@
 {
   "name": "evtscan",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "The js(ts) SDK to help developer using evtscan api.",
   "main": "dist/node.js",
   "files": [

@@ -17,8 +17,7 @@ var Classes = require("./instance/classes");
 var shared_1 = require("./shared");
 var EvtScan = /** @class */ (function () {
     function EvtScan(config, defaultParams) {
-        this.entrypoint = "https://evtscan.io/api";
-        this.timeout = 3000;
+        if (config === void 0) { config = {}; }
         this.debug = false;
         // Build recent request session
         this.block = this.buildRequest.bind(this, 'Block');
@@ -29,15 +28,16 @@ var EvtScan = /** @class */ (function () {
         this.nonfungible = this.buildRequest.bind(this, 'Nonfungible');
         this.everipay = this.buildRequest.bind(this, 'Everipay');
         this.everipass = this.buildRequest.bind(this, 'Everipass');
-        if (config.entrypoint)
-            this.entrypoint = config.entrypoint;
-        if (config.timeout)
-            this.timeout = config.timeout;
+        if (config.apiCaller && config.apiCaller instanceof apicaller_1.default) {
+            this.apiCaller = shared_1.default.apiCaller = config.apiCaller;
+        }
+        else {
+            this.apiCaller = shared_1.default.apiCaller = new apicaller_1.default(config.endpoint || null);
+        }
         if (config.debug)
             this.debug = config.debug;
         if (defaultParams)
             this.defaultParams = defaultParams;
-        this.apiCaller = shared_1.default.apiCaller = new apicaller_1.default(this.entrypoint, this.timeout);
     }
     Object.defineProperty(EvtScan.prototype, "request", {
         get: function () {
@@ -117,6 +117,7 @@ var EvtScan = /** @class */ (function () {
             AddressHistory: '/addressHistory/%%'
         }
     };
+    EvtScan.new = function (config) { return new EvtScan(config || {}); };
     return EvtScan;
 }());
 exports.default = EvtScan;

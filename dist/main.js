@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var evtscan_1 = require("./evtscan/evtscan");
+exports.EvtScan = evtscan_1.default;
 var apicaller_1 = require("./evtscan/instance/apicaller");
-exports.default = {
-    new: function (config) { return new evtscan_1.default(config || {}); },
-    EvtScan: evtscan_1.default,
-    ApiCaller: apicaller_1.default
-};
+exports.ApiCaller = apicaller_1.default;
+var Types = require("./evtscan/instance/types");
+exports.Types = Types;
+var Classes = require("./evtscan/instance/classes");
+exports.Classes = Classes;
+exports.default = evtscan_1.default;
