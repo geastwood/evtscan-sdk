@@ -52,6 +52,8 @@ var EvtScan = /** @class */ (function () {
         var uri = recent[type];
         if (uri) {
             if (!config || typeof config === 'object') {
+                if (type === 'Nonfungible')
+                    throw Error('Does not support general search for non-fungible yet.');
                 return new pager_1.default(uri, __assign({}, config, { formatter: function (_, data) {
                         var c = Classes[type];
                         if (c) {
@@ -64,6 +66,8 @@ var EvtScan = /** @class */ (function () {
             }
             else {
                 // get Detail
+                var c = Classes[type];
+                return new c().update(config);
             }
         }
         else {

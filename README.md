@@ -1,6 +1,6 @@
 # evtscan-sdk
 
-[![NHibiki](https://img.shields.io/badge/Download-Stable-39c000.svg?style=flat-square)](https://cdn.jsdelivr.net/npm/evtscan@1.0.5/dist/evtscan.js)
+[![NHibiki](https://img.shields.io/badge/Download-Stable-39c000.svg?style=flat-square)](https://cdn.jsdelivr.net/npm/evtscan@1.1.0/dist/evtscan.js)
 [![NHibiki](https://img.shields.io/badge/Download-Lately-edb900.svg?style=flat-square)](https://cdn.jsdelivr.net/npm/evtscan/dist/evtscan.js)
 [![Docs](https://img.shields.io/badge/Read-Docs-4da1ff.svg?style=flat-square)](#)
 [![NHibiki](https://img.shields.io/badge/Made%20With-%3C3-ff3000.svg?style=flat-square)](#)
@@ -46,6 +46,11 @@
     // Or
     // const otherBlock = new Block();
     // await otherBlock.update(BLOCK_ID));
+
+    // Get Detail by ID
+    // Take nonfungible: artworks.cert as example
+    const artworks = await evtScan.nonfungible('artworks.cert');
+    console.log(artworks);
     
     // Searching / Getting information of Address
     const addresses = evtScan.searchAddress('EVT73Y'); // :EvtScan.Pager, get results of addresses that match this pattern

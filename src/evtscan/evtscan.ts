@@ -87,6 +87,7 @@ export default class EvtScan {
         const uri: string = recent[type];
         if (uri) {
             if (!config || typeof config === 'object') {
+                if (type === 'Nonfungible') throw Error('Does not support general search for non-fungible yet.');
                 return new Pager(uri, {
                     ...config,
                     formatter: (_: Pager, data: any) => {
@@ -100,6 +101,8 @@ export default class EvtScan {
                 }, null, this.apiCaller);
             } else {
                 // get Detail
+                const c = (Classes as any)[type];
+                return new c().update(config);
             }
             
         } else {

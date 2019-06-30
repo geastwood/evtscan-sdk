@@ -139,12 +139,14 @@ var Block = /** @class */ (function (_super) {
             });
         });
     };
-    Block.prototype.prev = function () {
+    Block.prototype.prev = function (forceUpdate) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        if (this._prev && !forceUpdate)
+                            return [2 /*return*/, this._prev];
                         _a = this;
                         _b = Block.bind;
                         return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Block, null, this.prevId)];
@@ -182,7 +184,7 @@ var Transaction = /** @class */ (function (_super) {
         this.expiration = new Date(this._raw.expiration);
         this.blockId = this._raw.block_id;
         this.payer = {
-            address: this._raw.pager
+            address: this._raw.payer
         };
     };
     Transaction.prototype.update = function (id) {
@@ -203,11 +205,13 @@ var Transaction = /** @class */ (function (_super) {
             });
         });
     };
-    Transaction.prototype.getPayer = function () {
+    Transaction.prototype.getPayer = function (forceUpdate) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (this._payer && !forceUpdate)
+                            return [2 /*return*/, this._payer];
                         this._payer = new EvtAddress(this.payer, this.apiCaller);
                         return [4 /*yield*/, this._payer.update()];
                     case 1:
@@ -217,12 +221,14 @@ var Transaction = /** @class */ (function (_super) {
             });
         });
     };
-    Transaction.prototype.getBlock = function () {
+    Transaction.prototype.getBlock = function (forceUpdate) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        if (this._block && !forceUpdate)
+                            return [2 /*return*/, this._block];
                         _a = this;
                         _b = Block.bind;
                         return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Block, null, this.blockId)];
@@ -269,7 +275,7 @@ var Fungible = /** @class */ (function (_super) {
         this.timestamp = new Date(this._raw.timestamp);
         this.created = new Date(this._raw.created_at);
         this.creator = {
-            address: this._raw.pager
+            address: this._raw.creator
         };
         this.trxId = this._raw.trx_id;
     };
@@ -296,25 +302,29 @@ var Fungible = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Fungible.prototype.getTransaction = function () {
+    Fungible.prototype.getTransaction = function (forceUpdate) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, _b;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
+                        if (this._trx && !forceUpdate)
+                            return [2 /*return*/, this._trx];
                         _a = this;
                         _b = Transaction.bind;
-                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Block, null, this.trxId)];
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Transaction, null, this.trxId)];
                     case 1: return [2 /*return*/, _a._trx = new (_b.apply(Transaction, [void 0, _c.sent()]))()];
                 }
             });
         });
     };
-    Fungible.prototype.getCreator = function () {
+    Fungible.prototype.getCreator = function (forceUpdate) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (this._creator && !forceUpdate)
+                            return [2 /*return*/, this._creator];
                         this._creator = new EvtAddress(this.creator, this.apiCaller);
                         return [4 /*yield*/, this._creator.update()];
                     case 1:
@@ -327,3 +337,214 @@ var Fungible = /** @class */ (function (_super) {
     return Fungible;
 }(Base));
 exports.Fungible = Fungible;
+var Domain = /** @class */ (function (_super) {
+    __extends(Domain, _super);
+    function Domain() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Domain.prototype.init = function () {
+        this.name = this._raw.name;
+        this.metas = this._raw.metas;
+        this.issue = this._raw.issue;
+        this.transfer = this._raw.transfer;
+        this.manage = this._raw.manage;
+        this.timestamp = new Date(this._raw.timestamp);
+        this.created = new Date(this._raw.created_at);
+        this.creator = {
+            address: this._raw.creator
+        };
+        this.trxId = this._raw.trx_id;
+    };
+    Domain.prototype.update = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!id) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Domain, null, id)];
+                    case 1:
+                        _a._raw = _b.sent();
+                        this.init();
+                        _b.label = 2;
+                    case 2: return [2 /*return*/, this];
+                }
+            });
+        });
+    };
+    Domain.prototype.getTransaction = function (forceUpdate) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        if (this._trx && !forceUpdate)
+                            return [2 /*return*/, this._trx];
+                        _a = this;
+                        _b = Transaction.bind;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Transaction, null, this.trxId)];
+                    case 1: return [2 /*return*/, _a._trx = new (_b.apply(Transaction, [void 0, _c.sent()]))()];
+                }
+            });
+        });
+    };
+    Domain.prototype.getCreator = function (forceUpdate) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (this._creator && !forceUpdate)
+                            return [2 /*return*/, this._creator];
+                        this._creator = new EvtAddress(this.creator, this.apiCaller);
+                        return [4 /*yield*/, this._creator.update()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, this._creator];
+                }
+            });
+        });
+    };
+    return Domain;
+}(Base));
+exports.Domain = Domain;
+var Group = /** @class */ (function (_super) {
+    __extends(Group, _super);
+    function Group() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Group.prototype.init = function () {
+        this.name = this._raw.name;
+        this.metas = this._raw.metas;
+        this.def = this._raw.def;
+        this.timestamp = new Date(this._raw.timestamp);
+        this.created = new Date(this._raw.created_at);
+        this.key = {
+            address: this._raw.creator
+        };
+        this.trxId = this._raw.trx_id;
+    };
+    Group.prototype.update = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!id) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Group, null, id)];
+                    case 1:
+                        _a._raw = _b.sent();
+                        this.init();
+                        _b.label = 2;
+                    case 2: return [2 /*return*/, this];
+                }
+            });
+        });
+    };
+    Group.prototype.getTransaction = function (forceUpdate) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        if (this._trx && !forceUpdate)
+                            return [2 /*return*/, this._trx];
+                        _a = this;
+                        _b = Transaction.bind;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Transaction, null, this.trxId)];
+                    case 1: return [2 /*return*/, _a._trx = new (_b.apply(Transaction, [void 0, _c.sent()]))()];
+                }
+            });
+        });
+    };
+    Group.prototype.getKey = function (forceUpdate) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (this._key && !forceUpdate)
+                            return [2 /*return*/, this._key];
+                        this._key = new EvtAddress(this.key, this.apiCaller);
+                        return [4 /*yield*/, this._key.update()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, this._key];
+                }
+            });
+        });
+    };
+    return Group;
+}(Base));
+exports.Group = Group;
+var Nonfungible = /** @class */ (function (_super) {
+    __extends(Nonfungible, _super);
+    function Nonfungible() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Nonfungible.prototype.init = function () {
+        this.name = this._raw.name;
+        this.domain = this._raw.domain;
+        this.key = this._raw.key;
+        this.sequenceNumber = this._raw.seq_num;
+        this.globalSequence = this._raw.global_seq;
+        this.blockNum = this._raw.block_num;
+        this.data = this._raw.data;
+        this.distributes = this._raw.distributes;
+        this.created = new Date(this._raw.created_at);
+        this.blockId = this._raw.block_id;
+        this.trxId = this._raw.trx_id;
+    };
+    Nonfungible.prototype.update = function (domain) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!domain) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Nonfungible, null, domain)];
+                    case 1:
+                        _a._raw = _b.sent();
+                        this.init();
+                        _b.label = 2;
+                    case 2: return [2 /*return*/, this];
+                }
+            });
+        });
+    };
+    Nonfungible.prototype.getTransaction = function (forceUpdate) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        if (this._trx && !forceUpdate)
+                            return [2 /*return*/, this._trx];
+                        _a = this;
+                        _b = Transaction.bind;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Transaction, null, this.trxId)];
+                    case 1: return [2 /*return*/, _a._trx = new (_b.apply(Transaction, [void 0, _c.sent()]))()];
+                }
+            });
+        });
+    };
+    Nonfungible.prototype.getBlock = function (forceUpdate) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        if (this._block && !forceUpdate)
+                            return [2 /*return*/, this._block];
+                        _a = this;
+                        _b = Block.bind;
+                        return [4 /*yield*/, this.apiCaller.request(evtscan_1.default.R.Detail.Block, null, this.blockId)];
+                    case 1: return [2 /*return*/, _a._block = new (_b.apply(Block, [void 0, _c.sent()]))()];
+                }
+            });
+        });
+    };
+    return Nonfungible;
+}(Base));
+exports.Nonfungible = Nonfungible;

@@ -79,7 +79,8 @@ export class Block extends Base<any> {
         return this;
     }
 
-    async prev() {
+    async prev(forceUpdate?: boolean) {
+        if (this._prev && !forceUpdate) return this._prev;
         return this._prev = new Block(await this.apiCaller.request(EvtScan.R.Detail.Block, null, this.prevId));
     }
 
@@ -132,7 +133,7 @@ export class Transaction extends Base<any> {
 
         this.blockId = this._raw.block_id;
         this.payer = {
-            address: this._raw.pager
+            address: this._raw.payer
         } as Types.EvtAddress;
     }
 
@@ -144,13 +145,15 @@ export class Transaction extends Base<any> {
         return this;
     }
 
-    public async getPayer() {
+    public async getPayer(forceUpdate?: boolean) {
+        if (this._payer && !forceUpdate) return this._payer;
         this._payer = new EvtAddress(this.payer, this.apiCaller);
         await this._payer.update();
         return this._payer;
     }
 
-    public async getBlock() {
+    public async getBlock(forceUpdate?: boolean) {
+        if (this._block && !forceUpdate) return this._block;
         return this._block = new Block(await this.apiCaller.request(EvtScan.R.Detail.Block, null, this.blockId));
     }
 
@@ -198,7 +201,7 @@ export class Fungible extends Base<any> {
         this.created = new Date(this._raw.created_at);
 
         this.creator = {
-            address: this._raw.pager
+            address: this._raw.creator
         } as Types.EvtAddress;
         this.trxId = this._raw.trx_id;
     }
@@ -213,14 +216,181 @@ export class Fungible extends Base<any> {
 
     public get sym() { return `${this.precision},S#${this.symId}`; }
 
-    public async getTransaction() {
-        return this._trx = new Transaction(await this.apiCaller.request(EvtScan.R.Detail.Block, null, this.trxId));
+    public async getTransaction(forceUpdate?: boolean) {
+        if (this._trx && !forceUpdate) return this._trx;
+        return this._trx = new Transaction(await this.apiCaller.request(EvtScan.R.Detail.Transaction, null, this.trxId));
     }
 
-    public async getCreator() {
+    public async getCreator(forceUpdate?: boolean) {
+        if (this._creator && !forceUpdate) return this._creator;
         this._creator = new EvtAddress(this.creator, this.apiCaller);
         await this._creator.update();
         return this._creator;
+    }
+
+}
+
+export class Domain extends Base<any> {
+
+    public name: string;
+    public timestamp: Date;
+    public created: Date;
+
+    public metas: any[];
+    public issue: any;
+    public transfer: any;
+    public manage: any;
+
+    public creator: Types.EvtAddress;
+    public trxId: string;
+
+    private _creator: EvtAddress;
+    private _trx: Transaction;
+
+    init() {
+        this.name = this._raw.name;
+
+        this.metas = this._raw.metas;
+        this.issue = this._raw.issue;
+        this.transfer = this._raw.transfer;
+        this.manage = this._raw.manage;
+        
+        this.timestamp = new Date(this._raw.timestamp);
+        this.created = new Date(this._raw.created_at);
+
+        this.creator = {
+            address: this._raw.creator
+        } as Types.EvtAddress;
+        this.trxId = this._raw.trx_id;
+    }
+
+    async update(id?: string) {
+        if (id) {
+            this._raw = await this.apiCaller.request(EvtScan.R.Detail.Domain, null, id);
+            this.init();
+        }
+        return this;
+    }
+
+    public async getTransaction(forceUpdate?: boolean) {
+        if (this._trx && !forceUpdate) return this._trx;
+        return this._trx = new Transaction(await this.apiCaller.request(EvtScan.R.Detail.Transaction, null, this.trxId));
+    }
+
+    public async getCreator(forceUpdate?: boolean) {
+        if (this._creator && !forceUpdate) return this._creator;
+        this._creator = new EvtAddress(this.creator, this.apiCaller);
+        await this._creator.update();
+        return this._creator;
+    }
+
+}
+
+export class Group extends Base<any> {
+
+    public name: string;
+    public timestamp: Date;
+    public created: Date;
+
+    public metas: any[];
+    public def: any;
+
+    public key: Types.EvtAddress;
+    public trxId: string;
+
+    private _key: EvtAddress;
+    private _trx: Transaction;
+
+    init() {
+        this.name = this._raw.name;
+
+        this.metas = this._raw.metas;
+        this.def = this._raw.def;
+        
+        this.timestamp = new Date(this._raw.timestamp);
+        this.created = new Date(this._raw.created_at);
+
+        this.key = {
+            address: this._raw.creator
+        } as Types.EvtAddress;
+        this.trxId = this._raw.trx_id;
+    }
+
+    async update(id?: string) {
+        if (id) {
+            this._raw = await this.apiCaller.request(EvtScan.R.Detail.Group, null, id);
+            this.init();
+        }
+        return this;
+    }
+
+    public async getTransaction(forceUpdate?: boolean) {
+        if (this._trx && !forceUpdate) return this._trx;
+        return this._trx = new Transaction(await this.apiCaller.request(EvtScan.R.Detail.Transaction, null, this.trxId));
+    }
+
+    public async getKey(forceUpdate?: boolean) {
+        if (this._key && !forceUpdate) return this._key;
+        this._key = new EvtAddress(this.key, this.apiCaller);
+        await this._key.update();
+        return this._key;
+    }
+
+}
+
+export class Nonfungible extends Base<any> {
+
+    public name: string;
+    public domain: string;
+    public key: string;
+    public sequenceNumber: number;
+    public globalSequence: string;
+    public blockNum: number;
+
+    public created: Date;
+
+    public data: any;
+    public distributes: any[];
+
+    public blockId: string;
+    public trxId: string;
+
+    private _block: Block;
+    private _trx: Transaction;
+
+    init() {
+        this.name = this._raw.name;
+        this.domain = this._raw.domain;
+        this.key = this._raw.key;
+        this.sequenceNumber = this._raw.seq_num;
+        this.globalSequence = this._raw.global_seq;
+        this.blockNum = this._raw.block_num;
+
+        this.data = this._raw.data;
+        this.distributes = this._raw.distributes;
+        
+        this.created = new Date(this._raw.created_at);
+
+        this.blockId = this._raw.block_id;
+        this.trxId = this._raw.trx_id;
+    }
+
+    async update(domain?: string) {
+        if (domain) {
+            this._raw = await this.apiCaller.request(EvtScan.R.Detail.Nonfungible, null, domain);
+            this.init();
+        }
+        return this;
+    }
+
+    public async getTransaction(forceUpdate?: boolean) {
+        if (this._trx && !forceUpdate) return this._trx;
+        return this._trx = new Transaction(await this.apiCaller.request(EvtScan.R.Detail.Transaction, null, this.trxId));
+    }
+
+    public async getBlock(forceUpdate?: boolean) {
+        if (this._block && !forceUpdate) return this._block;
+        return this._block = new Block(await this.apiCaller.request(EvtScan.R.Detail.Block, null, this.blockId));
     }
 
 }
