@@ -28,7 +28,9 @@
     // Or [with homemade apiCaller]
     // const evtScan = new EvtScan({ endpoint: 'https://some-evtscans.io/api/' });
 
-    const blocks = evtScan.block();
+    // Getting information of Block / Transaction / Fungible
+    const blocks = evtScan.block(); // or evtScan.transaction(), evtScan.fungible(), etc.
+                                    // :EvtScan.Pager
 
     console.log(await blocks.next()); // it will print the first 10 blocks
     console.log(await blocks.next()); // then next 10-19[included] blocks
@@ -44,6 +46,18 @@
     // Or
     // const otherBlock = new Block();
     // await otherBlock.update(BLOCK_ID));
+    
+    // Searching / Getting information of Address
+    const addresses = evtScan.searchAddress('EVT73Y'); // :EvtScan.Pager, get results of addresses that match this pattern
+    const result = await addresses.next();
+    const addr = result[0];
+    console.log(addr.address); // results might differ
+    // EVT73yyCz1VWKu6WsCtv31C2ifsC4Ef7Zn7WhfdYD3qtHeB8CRUPa
+    await addr.update(); // get all information about this address
+    console.log(addr.address);
+    const { history } = addr; // :EvtScan.Pager, get transaction history
+    history.pageSize = 100;
+    console.log(await history.next()); // get the first 100 transactions
 
     // enjoy ...
 
